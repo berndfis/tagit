@@ -1,38 +1,36 @@
 #!/usr/bin/python
 
 # Next Stpes:
-# - camelCase because you are used to it
-# - all tags names start with capital name/preporcess the files
-# - complete argparse
-# - nice printing
+# - test with 10 discs for archive
+# - complete argparse --> update is implemented blind currently
 
 # TODO:
 # options for
 # - update or overwirte mode, abcde seems to tag correctly, if cover in album path works
 #   update options have to be checked
 # - -single -> done
-# - -archive
-# - probably all update options could be grouped 
-# - -update_album
-# - -update_album_artist
-# - -update_cover
-# - -update_date
-# - -update_genre
-# - -update_diskno
+# - -archive ->done
+# - probably all update options could be grouped -> done
 # - file format -> automatic detection             -> done
 # - embed cover to file or just put it in the album path
 #   -> check for iTunes -> done for iTunes, MortPlayer
 #   -> check for networkpalyer support
-# - create play list
-# - smart various artist detection
+# - create play list -> needed ?
+# - smart various artist detection -> needed ? 
 # - if everything is done try to restucture, make code beter
 # - Python3, but at least, form future import print
 
 
-# TODO: Start documentation here
+# TODO: Documentation
 
 ################################################################################
 #
+#   Git Hash:       $Id$
+#   Date:           $Date$
+#   File:           $File$
+#   Author:         $Author$
+#   Revision:       $Revision$
+#   
 #   Tag Mapping Table:
 #
 #   Internal Name       MP4             MP3
@@ -53,7 +51,7 @@
 #   cover               covr            APIC
 #
 #   Coding style:
-#   Even though I'm mainly used to write code in proprietary Lisp dialect
+#   Even though I'm mainly used to write code in a proprietary Lisp dialect
 #   I tried to write pythonic code according to:
 #   http://legacy.python.org/dev/peps/pep-0008/
 #   http://legacy.python.org/dev/peps/pep-0020/
@@ -64,6 +62,10 @@ import os
 import string
 import glob
 import sys
+import fcntl
+import termios
+import struct
+import time
 import argparse
 from ConfigParser import SafeConfigParser
 from mutagen.mp4 import MP4, MP4Cover
@@ -71,33 +73,42 @@ from mutagen.mp3 import MP3
 from mutagen.id3 import ID3NoHeaderError, error
 from mutagen.id3 import ID3, TRCK, TIT2, TPE1, TALB, TDRC, TCON, TPE2, TPOS, APIC
 
+COLS = struct.unpack('hh', fcntl.ioctl(sys.stdout, termios.TIOCGWINSZ, '1234'))[1]
+
 ################################################################################
 def usage():
     """Displays usage and processes the input arguments"""
  
     parser = argparse.ArgumentParser(
                 description = 
-                    'Audio file archive tagger for mp3 and m4a.',
-                version = os.path.split( __file__ )[1] + 'Version: 0.1' #TODO: Replace with GIT hash
+                    'audio file archive tagger for mp3 and m4a',
+                version = os.path.split( __file__ )[1] + 'Version: 0.1'
                 )
 
     group = parser.add_mutually_exclusive_group()
     
     # Optional arguments      
     group.add_argument(
-        '--single',
+        '-s', '--single',
         action = 'store',
         help = 'single directory, input must be the directory name'
         )  
         
     group.add_argument(
-        '--archive',
+        '-a', '--archive',
         action = 'store_true',
         help = 'complete audio file directory archive, starting from the current directory'
         )
 
     parser.add_argument(
-        '--verbose',
+        '-u', '--update',
+        action = 'append',
+        default = 'all',
+        choices = ['all', 'album', 'albumartist', 'cover', 'genre'],
+        help = 'updates only the defined tag fields, "all" tags all fields form album.info plus cover'
+        )
+    parser.add_argument(
+        '-i', '--info',
         action = 'store_true',
         default = True,
         help = 'gives a verbose output about the tagging status'
@@ -152,25 +163,40 @@ def createPrompt(path):
 def color(this_color, string):
     """Creates a terminal color output."""
 
-    return "\033[" + this_color + "m" + string + "\033[0m"   
+    return "\033[" + this_color + "m" + string + "\033[0m"
+
+################################################################################
+def progress(current, total):
+    """Creates a terminal progress bar."""
+    
+    prefix = '%d/%d' % (current, total)
+    barStart = ' ['
+    barEnd = '] '
+    barSize = len(prefix + barStart + barEnd ) + total
+    amount = int(current / (total / float(barSize)))
+    remain = barSize - amount
+    bar = 'X' * amount + ' ' * remain
+    return prefix + barStart + bar + barEnd
 
 ################################################################################           
 def getAlbumInfo(albumInfoPath, tags):
     """Reads the album info file and adds the content to the tag dictionary."""
-
-    # TODO: 
-    # check if we need to assign the folder
-    # 
-    # if file exist go ahead
-    # if not promt to go ahead foreach sigle dir
+    
     parser = SafeConfigParser()
     parser.read(albumInfoPath)
-    tags['album'] = parser.get('albuminfo', 'album')
-    tags['albumartist'] = parser.get('albuminfo', 'albumartist')
-    tags['date'] = parser.get('albuminfo', 'date')
-    tags['genre'] = parser.get('albuminfo', 'genre')
-    tags['discnumber'] = int(parser.get('albuminfo', 'discnumber'))
-    tags['totaldiscs'] = int(parser.get('albuminfo', 'totaldiscs'))
+    if parser.has_option('albuminfo', 'album'):
+        tags['album'] = parser.get('albuminfo', 'album')
+    if parser.has_option('albuminfo', 'albumartist'):
+        tags['albumartist'] = parser.get('albuminfo', 'albumartist')
+    if parser.has_option('albuminfo', 'date'):
+        tags['date'] = parser.get('albuminfo', 'date')
+    if parser.has_option('albuminfo', 'genre'):
+        tags['genre'] = parser.get('albuminfo', 'genre')
+    if parser.has_option('albuminfo', 'discnumber'):
+        tags['discnumber'] = int(parser.get('albuminfo', 'discnumber'))
+    if parser.has_option('albuminfo', 'totaldiscs'):
+        tags['totaldiscs'] = int(parser.get('albuminfo', 'totaldiscs'))
+    
     return tags
     
 ################################################################################    
@@ -182,7 +208,7 @@ def getCover(folder, tags):
 
 ################################################################################
 def createTagInfo(tagName, tags):
-    """ Creates the print info for tag."""
+    """Creates the print info for tag."""
     
     if tagName in tags:
         print('\t%s: %s' % (tagName.title(), color('32', tags[tagName])))
@@ -190,7 +216,8 @@ def createTagInfo(tagName, tags):
         print('\t%s: %s' % (tagName.title(), color('31', 'No')))
     
 ################################################################################
-def printTaggingInfo(fileName, tags):
+def printTaggingInfo(fileName, tags, i):
+    """Prints the tagging information and status of the audio file."""
     
     print('Tagging audio file: %s' % (color('1;33', os.path.basename(fileName))))
 
@@ -202,19 +229,20 @@ def printTaggingInfo(fileName, tags):
     if 'cover_image' in tags:
         print('\tCover: %s' % (color('32', 'Yes')))
     else:
-        print('\tCover: %s' % (color('31', 'No')))                      
+        print('\tCover: %s' % (color('31', 'No')))
+
+    # Print 
+    sys.stdout.write(progress(i, tags['totaltracks']) + '\r')
+    sys.stdout.flush()
+    time.sleep(0.002)                  
     
 ################################################################################
-def tagMP4(folder, audioFile, tags, verbose):
+def tagMP4(folder, audioFile, tags, info):
     # TODO: need a update function
-    #       probaly foreach if I can manage to mapp the tags
 
     # Build cover data
     cover = []
     cover.append(MP4Cover(tags['cover_image'] , MP4Cover.FORMAT_PNG))
-
-    # Get total number of tracks.
-    totaltracks = len(glob.glob1(folder, '*.m4a'))
 
     # Get mp4 audio file
     mp4audio = MP4(audioFile)
@@ -224,8 +252,8 @@ def tagMP4(folder, audioFile, tags, verbose):
     mp4audio.delete(audioFile) 
     
     # Adding new tags.
-    if 'track' in tags and totaltracks: 
-        mp4audio['trkn'] = [(int(tags['track']), totaltracks)]
+    if 'track' in tags and 'totaltracks' in tags: 
+        mp4audio['trkn'] = [(int(tags['track']), tags['totaltracks'])]
     mp4audio['\xa9nam'] = tags['title']
     mp4audio['\xa9ART'] = tags['artist']
     if 'album' in tags:
@@ -240,23 +268,14 @@ def tagMP4(folder, audioFile, tags, verbose):
         mp4audio['disk'] = [(tags['discnumber'], tags['totaldiscs'])]
     if 'cover_image' in tags:
         mp4audio['covr'] = cover
-
-    # Print the tagging information
-    if verbose:
-        printTaggingInfo(audioFile, tags)
               
     # Save new tags.
     mp4audio.save( )
     
 ################################################################################
-def tagMP3(folder, audioFile, tags, verbose):
-    # --> TODO: need a update function
-    #           cover check
-    #       probaly foreach if I can manage to mapp the tags
-
-    # Get total number of tracks.
-    totaltracks = len(glob.glob1(folder, '*.mp3'))
-    
+def tagMP3(folder, audioFile, tags, info):
+    # TODO: need a update function
+     
     # Get mp3 audio file    
     # and create ID3 tag if not present
     mp3audio = MP3(audioFile, ID3 = ID3)
@@ -266,8 +285,8 @@ def tagMP3(folder, audioFile, tags, verbose):
     mp3audio.delete(audioFile)
 
     # Adding new tags.
-    if 'track' in tags and totaltracks: 
-        mp3audio['TRCK'] =  TRCK(encoding = 3, text = unicode(str(tags['track']) + '/' + str(totaltracks))) 
+    if 'track' in tags and 'totaltracks' in tags: 
+        mp3audio['TRCK'] =  TRCK(encoding = 3, text = unicode(str(tags['track']) + '/' + str(tags['totaltracks']))) 
     mp3audio['TIT2'] = TIT2(encoding = 3, text = unicode(tags['title']))
     mp3audio['TPE1'] = TPE1(encoding = 3, text = unicode(tags['artist']))
     if 'album' in tags:
@@ -288,17 +307,13 @@ def tagMP3(folder, audioFile, tags, verbose):
                             desc = u'Cover',
                             data = tags['cover_image']
                             )
-
-    # Print the tagging information
-    if verbose:
-        printTaggingInfo(audioFile, tags)
-
     # Save new tags.
     mp3audio.save()
    
 ################################################################################
-def tagit(folder, tags, verbose):
-   
+def tagit(folder, tags, info):
+
+    i = 0
     for fileName in os.listdir(folder):
         # Check if the file name contains more than one dot in the name, 
         # if yes this will create issues with splitting the extension.
@@ -333,17 +348,28 @@ def tagit(folder, tags, verbose):
                 audioFile = os.path.join(folder, fileName)  
 
                 if extension == 'mp3':
-                   tagMP3(folder, audioFile, tags, verbose)
+                    # Get total number of tracks.
+                    tags['totaltracks'] = len(glob.glob1(folder, '*.mp3')) 
+                    # Tag mp3
+                    tagMP3(folder, audioFile, tags, info)
 
                 if extension == 'm4a':
-                    tagMP4(folder, audioFile, tags, verbose)    
+                    # Get total number of tracks.
+                    tags['totaltracks'] = len(glob.glob1(folder, '*.m4a'))
+                    # Tag mp4
+                    tagMP4(folder, audioFile, tags, info)
+
+                # Print the tagging information
+                if info:
+                    i +=1
+                    printTaggingInfo(audioFile, tags, i)    
                       
         else:  
             print('File name: "%s" contains two dots, only one is allowed.' % ( fileName ))
             sys.exit()
             
 ################################################################################
-def renameAudioFolder(oldName, tags, verbose):
+def renameAudioFolder(oldName, tags, info):
     """Renames the audio folder according the following rules:
         Various artists:            Album name
         Various artists multi disc: Album name + disc no.
@@ -362,7 +388,7 @@ def renameAudioFolder(oldName, tags, verbose):
                 newName = tags['artist'].title().replace(' ', '') + tags['album'].title().replace(' ', '') + 'CD' + str(tags['discnumber'])
             else:    
                 newName = tags['artist'].title().replace(' ', '') + tags['album'].title().replace(' ', '')
-        if verbose:
+        if info:
             print('Renaming audio folder from %s to %s.' % (color('1;33', oldName), color('1;33', newName)))
         os.rename(oldName, newName)
     else:
@@ -371,34 +397,36 @@ def renameAudioFolder(oldName, tags, verbose):
 ################################################################################
 def main( ):
 
-    tags = { }
     rootFolder = os.getcwd( )
     args = usage()
-    verbose = args['verbose']
+    info = args['info']
     if args['single']:
-        albumFolder = args['single']
-        if verbose:
+        albumFolders = [args['single']]
+    if args['archive']:
+        albumFolders = os.walk('.').next()[1]
+    for  albumFolder in albumFolders:
+        tags = {}
+        if info:
             print('Tagging audio folder: %s' % (color('1;33', albumFolder)))
         folder = os.path.join(rootFolder, albumFolder)
-    #if args['archive']:
-    #    print key, value
-    coverPath = os.path.join(folder, 'cover.jpg')
-    coverReturn = createPrompt(coverPath) # True/False
-    if coverReturn == 'cover.jpg':
-        tags = getCover(folder, tags)   
-    elif not coverReturn:
-        sys.exit( )
-    albumInfoPath = os.path.join(folder, 'album.info')
-    albumInfoReturn = createPrompt(albumInfoPath) # True/False
-    if albumInfoReturn == 'album.info':
-        tags = getAlbumInfo(albumInfoPath, tags)
-    elif not albumInfoReturn:
-        sys.exit()
-    tagit(folder, tags, verbose)
-    if 'album' in tags and 'artist' in tags:
-        renameAudioFolder(albumFolder, tags, verbose)
-    else:
-        print('Could not rename audio folder, no artist or alblum information found.') 
+        coverPath = os.path.join(folder, 'cover.jpg')
+        coverReturn = createPrompt(coverPath) # True/False
+        if coverReturn == 'cover.jpg':
+            tags = getCover(folder, tags)   
+        elif not coverReturn:
+            sys.exit( )
+        albumInfoPath = os.path.join(folder, 'album.info')
+        albumInfoReturn = createPrompt(albumInfoPath) # True/False
+        if albumInfoReturn == 'album.info':
+            tags = getAlbumInfo(albumInfoPath, tags)
+        elif not albumInfoReturn:
+            sys.exit()
+        tagit(folder, tags, info)
+        if 'album' in tags and 'artist' in tags:
+            renameAudioFolder(albumFolder, tags, info)
+        else:
+            print('Could not rename audio folder, no artist or alblum information found.') 
+        print
     print('%s' % (color('1;32', 'Successfully completed!')))
     
 if __name__ == '__main__':
