@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
 # Next Stpes:
-# - test with 10 discs for archive
+# - for -s check if dir exists
 # - complete argparse --> update is implemented blind currently
+# - form future import print
 
 # TODO:
 # options for
@@ -18,8 +19,6 @@
 # - create play list -> needed ?
 # - smart various artist detection -> needed ? 
 # - if everything is done try to restucture, make code beter
-# - Python3, but at least, form future import print
-
 
 # TODO: Documentation
 
@@ -30,6 +29,8 @@
 #   File:           $File$
 #   Author:         $Author$
 #   Revision:       $Revision$
+#
+#   Motivation:
 #   
 #   Tag Mapping Table:
 #
@@ -72,8 +73,6 @@ from mutagen.mp4 import MP4, MP4Cover
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3NoHeaderError, error
 from mutagen.id3 import ID3, TRCK, TIT2, TPE1, TALB, TDRC, TCON, TPE2, TPOS, APIC
-
-COLS = struct.unpack('hh', fcntl.ioctl(sys.stdout, termios.TIOCGWINSZ, '1234'))[1]
 
 ################################################################################
 def usage():
@@ -180,23 +179,21 @@ def progress(current, total):
 
 ################################################################################           
 def getAlbumInfo(albumInfoPath, tags):
-    """Reads the album info file and adds the content to the tag dictionary."""
+    """Reads the album info file and adds the content to the tag dictionary.
+        Posible album info options are:
+        srtings: album, albumartist, date, genre
+        integers: discnumber, totaldiscs
+    """
     
     parser = SafeConfigParser()
     parser.read(albumInfoPath)
-    if parser.has_option('albuminfo', 'album'):
-        tags['album'] = parser.get('albuminfo', 'album')
-    if parser.has_option('albuminfo', 'albumartist'):
-        tags['albumartist'] = parser.get('albuminfo', 'albumartist')
-    if parser.has_option('albuminfo', 'date'):
-        tags['date'] = parser.get('albuminfo', 'date')
-    if parser.has_option('albuminfo', 'genre'):
-        tags['genre'] = parser.get('albuminfo', 'genre')
-    if parser.has_option('albuminfo', 'discnumber'):
-        tags['discnumber'] = int(parser.get('albuminfo', 'discnumber'))
-    if parser.has_option('albuminfo', 'totaldiscs'):
-        tags['totaldiscs'] = int(parser.get('albuminfo', 'totaldiscs'))
-    
+    for option in parser.options('albuminfo'):
+        if parser.has_option('albuminfo', option):
+           if option in ['discnumber', 'totaldiscs']:
+                tags[option] = int(parser.get('albuminfo', option))
+           else:    
+                tags[option] = parser.get('albuminfo', option)
+        
     return tags
     
 ################################################################################    
@@ -376,7 +373,8 @@ def renameAudioFolder(oldName, tags, info):
         Single artist:              Artsit name + album name
         Single artist multi disc:   Artsit name + album name + disc no.
     """
-
+    print('DEBUG: %s' % tags['totaldiscs'])
+    print('DEBUG: %s' % type(tags['totaldiscs']))
     if os.path.isdir(oldName):
         if 'albumartist' in tags and tags['albumartist'] == 'Various Artists':
             if 'totaldiscs' in tags and tags['totaldiscs'] > 1:
