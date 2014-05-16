@@ -3,16 +3,16 @@ tagit
 
 A Python Mutagen audio file Tagger for folder based music archives.
 
-Motivation:
------------
+Motivation
+----------
 A long story which comes later.
 
-Features:
----------
+Features
+--------
 Will bee added soon.
 
-Requirements:
--------------
+Requirements
+------------
 - An album cover image in jpg format, named "cover.jpg" is required in each CD folder
   to tag the album cover.
 - An album info file in each CD music folder in Python ConfigParser style is
@@ -29,8 +29,8 @@ discnumber = 1
 totaldiscs = 1
 ```
 
-Usage:
-------
+Usage
+-----
 ```
 usage: tagit.py [-h] [-v] [-s SINGLE | -a]
                 [-u {all,album,albumartist,cover,genre}] [-i]
@@ -52,8 +52,8 @@ optional arguments:
 -u is a blind option so far.
 
 
-Tag Mapping Table:
-------------------
+Tag Mapping Table
+-----------------
 
 The following tables describes the tag maps I have used in my code
 for internal tag names, iTunes (m4a) and ID3v2 (mp3).
@@ -75,16 +75,16 @@ Reference: [MusicBrainz Picard Mapping]
 | cover         | covr         | APIC
 
 
-Coding Style:
--------------
+Coding Style
+------------
 Even though I'm mainly used to write code in a proprietary Lisp dialect
 I tried to write pythonic code according to:
 - [Style Guide for Python Code]
 - [The Zen of Python]
 
 
-Good Other Stuff:
------------------
+Good Other Stuff
+----------------
 - If you are looking for a Tagger with a great graphical UI
   go for [Puddeltag].
 - [Beets] a music collection organizer which looks for Music Brainz entries, as well on GitHub.
