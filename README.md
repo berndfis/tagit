@@ -87,10 +87,11 @@ Good Other Stuff
 ----------------
 - If you are looking for a Tagger with a great graphical UI
   go for [Puddeltag].
-- [Beets] a music collection organizer which looks for Music Brainz entries, as well on GitHub.
+- [Beets] a music collection organizer which looks for Music Brainz entries, also  [Beets on GitHub].
 
 [MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
 [Style Guide for Python Code]:http://legacy.python.org/dev/peps/pep-0008/
 [The Zen of Python]:http://legacy.python.org/dev/peps/pep-0020/
 [Puddeltag]:http://puddletag.sourceforge.net/
 [Beets]:http://beets.radbox.org/
+[Beets on GitHub]:https://github.com/sampsyo/beets
