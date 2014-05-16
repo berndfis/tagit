@@ -13,7 +13,7 @@ Will bee added soon.
 
 Requirements:
 -------------
-- A album cover image in jpg format, named "cover.jpg" is required in each CD folder
+- An album cover image in jpg format, named "cover.jpg" is required in each CD folder
   to tag the album cover.
 - An album info file in each CD music folder in Python ConfigParser style is
 required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
