@@ -85,11 +85,11 @@ I tried to write pythonic code according to:
 Good other stuff:
 -----------------
 - If you are looking for a Tagger with a great graphical UI
-  go for [Puddeltag]
+  go for [Puddeltag].
 - [Beets] a music collection organizer which looks for Music Brainz entries, as well on GitHub.
 
 [MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
-[Style Guide for Python Code]:http://legacy.python.org/dev/peps/pep-0008/:
+[Style Guide for Python Code]:http://legacy.python.org/dev/peps/pep-0008/
 [The Zen of Python]:http://legacy.python.org/dev/peps/pep-0020/
 [Puddeltag]:http://puddletag.sourceforge.net/
 [Beets]:http://beets.radbox.org/
