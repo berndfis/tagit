@@ -36,8 +36,7 @@ Tag Mapping Table:
 The following tables describes the tag maps I have used in my code
 for internal tag names, iTunes (m4a) and ID3v2 (mp3).
 
-Reference:
-https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
+Reference: [MusicBrainz Picard Mapping]
 
 | Internal Name | MP4 (iTunes) | MP3 (ID3v2 4.0) 
 |---------------|--------------|-----------------
@@ -52,3 +51,6 @@ https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
 | discnumber    | disk         | TPOS
 | totaldiscs    | disk         | TPOS
 | cover         | covr         | APIC
+
+
+[MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags
