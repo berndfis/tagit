@@ -7,6 +7,27 @@ Motivation:
 -----------
 A long story which comes later.
 
+Features:
+---------
+Will bee added soon.
+
+Requirements:
+-------------
+- A album cover image in jpg format, named "cover.jpg" is required in each CD folder
+  to tag the album cover.
+- An album info file in each CD music folder in Python ConfigParser style is
+required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
+Example:
+```
+[albuminfo]
+album = Thriller
+albumartist = Michael Jackson
+date = 1982
+genre = Pop
+discnumber = 1
+totaldiscs = 1
+```
+
 Usage:
 ------
 ```
@@ -53,4 +74,22 @@ Reference: [MusicBrainz Picard Mapping]
 | cover         | covr         | APIC
 
 
-[MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags
+Coding style:
+-------------
+Even though I'm mainly used to write code in a proprietary Lisp dialect
+I tried to write pythonic code according to:
+- [Style Guide for Python Code]
+- [The Zen of Python]
+
+
+Good other stuff:
+-----------------
+- If you are looking for a Tagger with a great graphical UI
+  go for [Puddeltag]
+- [Beets] a music collection organizer which looks for Music Brainz entries, as well on GitHub.
+
+[MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
+[Style Guide for Python Code]:http://legacy.python.org/dev/peps/pep-0008/:
+[The Zen of Python]:http://legacy.python.org/dev/peps/pep-0020/
+[Puddeltag]:http://puddletag.sourceforge.net/
+[Beets]:http://beets.radbox.org/
