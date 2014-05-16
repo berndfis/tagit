@@ -75,7 +75,7 @@ Reference: [MusicBrainz Picard Mapping]
 | cover         | covr         | APIC
 
 
-Coding style:
+Coding Style:
 -------------
 Even though I'm mainly used to write code in a proprietary Lisp dialect
 I tried to write pythonic code according to:
@@ -83,7 +83,7 @@ I tried to write pythonic code according to:
 - [The Zen of Python]
 
 
-Good other stuff:
+Good Other Stuff:
 -----------------
 - If you are looking for a Tagger with a great graphical UI
   go for [Puddeltag].
