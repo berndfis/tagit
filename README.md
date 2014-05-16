@@ -17,6 +17,7 @@ Requirements:
   to tag the album cover.
 - An album info file in each CD music folder in Python ConfigParser style is
 required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
+
 Example:
 ```
 [albuminfo]
