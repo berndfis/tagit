@@ -13,12 +13,12 @@ Will bee added soon.
 
 Requirements
 ------------
-- A folder based music archive, recommendation is to have on CD represented by one folder.
-- Audio file names in the notation <track>-<titel>-<artist>.<extension> or 
-  <titel>-<artist>.<extension> for doing a file to tag tagging. 
-- An album cover image in jpg format, named "cover.jpg" is required in each CD folder
+* A folder based music archive, recommendation is to have on CD represented by one folder.
+* Audio file names in the notation ```<track>-<titel>-<artist>.<extension>``` or 
+  ```<titel>-<artist>.<extension>``` for doing a file to tag tagging. 
+* An album cover image in jpg format, named "cover.jpg" is required in each CD folder
   to tag the album cover.
-- An album info file in each CD music folder in Python ConfigParser style is
+* An album info file in each CD music folder in Python ConfigParser style is
 required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
 
 Example album.info file content:
@@ -82,17 +82,24 @@ Coding Style
 ------------
 Even though I'm mainly used to write code in a proprietary Lisp dialect
 I tried to write pythonic code according to:
-- [Style Guide for Python Code]
-- [The Zen of Python]
+* [Style Guide for Python Code]
+* [The Zen of Python]
 
 
 Good Other Stuff
 ----------------
-- If you are looking for a Tagger with a great graphical UI
+* [neroAacEncoder] my AAC (m4a) encoder choiuce.
+* [abcde] the best Linux CD ripper, comand line only, but who needs more.
+* [Asuder] a lean grahical CD ripper for Linux.
+* If you are looking for a Tagger with a great graphical UI
   go for [Puddeltag].
-- [Beets] a music collection organizer which looks for Music Brainz entries, also  [Beets on GitHub].
+* [Beets] a music collection organizer which looks for Music Brainz entries, also  [Beets on GitHub].
 
 [Mutagen]:https://code.google.com/p/mutagen/
+[neroAacEncoder]:http://www.nero.com/enu/company/about-nero/nero-aac-codec.php
+[abcde]:https://code.google.com/p/abcde/
+[Asuder]:http://littlesvr.ca/asunder/
+
 [MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
 [Style Guide for Python Code]:http://legacy.python.org/dev/peps/pep-0008/
 [The Zen of Python]:http://legacy.python.org/dev/peps/pep-0020/
