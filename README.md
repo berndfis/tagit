@@ -1,7 +1,7 @@
 tagit
 =====
 
-A Python Mutagen audio file Tagger for folder based music archives.
+A Python [Mutagen] audio file Tagger for folder based music archives.
 
 Motivation
 ----------
@@ -13,12 +13,15 @@ Will bee added soon.
 
 Requirements
 ------------
+- A folder based music archive, recommendation is to have on CD represented by one folder.
+- Audio file names in the notation <track>-<titel>-<artist>.<extension> or 
+  <titel>-<artist>.<extension> for doing a file to tag tagging. 
 - An album cover image in jpg format, named "cover.jpg" is required in each CD folder
   to tag the album cover.
 - An album info file in each CD music folder in Python ConfigParser style is
 required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
 
-Example:
+Example album.info file content:
 ```
 [albuminfo]
 album = Thriller
@@ -40,7 +43,7 @@ audio file archive tagger for mp3 and m4a
 optional arguments:
   -h, --help            show this help message & exit
   -v, --version         show programs version number & exit
-  -s <dir>, --single <dir> single directory, input must be the folder name
+  -s SINGLE, --single SINGLE single directory, input must be the folder name
   -a, --archive         complete audio file directory archive, starting from the 
                         current directory
   -u {all,album,albumartist,cover,genre}, 
@@ -89,6 +92,7 @@ Good Other Stuff
   go for [Puddeltag].
 - [Beets] a music collection organizer which looks for Music Brainz entries, also  [Beets on GitHub].
 
+[Mutagen]:https://code.google.com/p/mutagen/
 [MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
 [Style Guide for Python Code]:http://legacy.python.org/dev/peps/pep-0008/
 [The Zen of Python]:http://legacy.python.org/dev/peps/pep-0020/
