@@ -1,64 +1,13 @@
 #!/usr/bin/python
 
-# Next Stpes:
-# - for -s check if dir exists
-# - complete argparse --> update is implemented blind currently
-# - form future import print
-
-# TODO:
-# options for
-# - update or overwirte mode, abcde seems to tag correctly, if cover in album path works
-#   update options have to be checked
-# - -single -> done
-# - -archive ->done
-# - probably all update options could be grouped -> done
-# - file format -> automatic detection             -> done
-# - embed cover to file or just put it in the album path
-#   -> check for iTunes -> done for iTunes, MortPlayer
-#   -> check for networkpalyer support
-# - create play list -> needed ?
-# - smart various artist detection -> needed ? 
-# - if everything is done try to restucture, make code beter
-
-# TODO: Documentation
-
 ################################################################################
 #
-#   Git Hash:       $Id$
-#   Date:           $Date$
-#   File:           $File$
-#   Author:         $Author$
-#   Revision:       $Revision$
-#
-#   Motivation:
-#   
-#   Tag Mapping Table:
-#
-#   Internal Name       MP4             MP3
-#   Compatible with:            
-#   MusicBrainz Picard  iTunes          ID3v2 (4.0)
-#   https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
-#   ----------------------------------------------------------------------------
-#   tracknumber         trkn            TRCK   
-#   totaltracks         trkn            TRCK
-#   title               \xa9nam         TIT2       
-#   artist              \xa9ART        	TPE1
-#   album               \xa9alb         TALB        
-#   date                \xa9day         TDRC        
-#   genre               \xa9gen         TCON
-#   albumartist         aART            TPE2          
-#   discnumber	        disk            TPOS
-#   totaldiscs          disk            TPOS
-#   cover               covr            APIC
-#
-#   Coding style:
-#   Even though I'm mainly used to write code in a proprietary Lisp dialect
-#   I tried to write pythonic code according to:
-#   http://legacy.python.org/dev/peps/pep-0008/
-#   http://legacy.python.org/dev/peps/pep-0020/
+# $Id$
+# $Revision$
 #
 ################################################################################
 
+from __future__ import print_function
 import os
 import string
 import glob
@@ -80,8 +29,8 @@ def usage():
  
     parser = argparse.ArgumentParser(
                 description = 
-                    'audio file archive tagger for mp3 and m4a',
-                version = os.path.split( __file__ )[1] + 'Version: 0.1'
+                    'audio file tagger for folder based music archives for mp3 and m4a files',
+                version = os.path.split( __file__ )[1]
                 )
 
     group = parser.add_mutually_exclusive_group()
@@ -147,7 +96,7 @@ def queryYesNo(question, default='yes'):
 
 ################################################################################                             
 def createPrompt(path):
-    """Checks if a file exists and ask to create it if not."""
+    """Checks if a file exists and ask to crfrom __future__ import print_functioneate it if not."""
 
     if os.path.isfile(path):
         return os.path.basename(path)
@@ -189,9 +138,6 @@ def getAlbumInfo(albumInfoPath, tags):
     parser.read(albumInfoPath)
     for option in parser.options('albuminfo'):
         if parser.has_option('albuminfo', option):
-           if option in ['discnumber', 'totaldiscs']:
-                tags[option] = int(parser.get('albuminfo', option))
-           else:    
                 tags[option] = parser.get('albuminfo', option)
         
     return tags
@@ -262,7 +208,7 @@ def tagMP4(folder, audioFile, tags, info):
     if 'genre' in tags:
         mp4audio['\xa9gen'] = tags['genre']
     if 'discnumber' in tags and 'totaldiscs' in tags:
-        mp4audio['disk'] = [(tags['discnumber'], tags['totaldiscs'])]
+        mp4audio['disk'] = [(int(tags['discnumber']), int(tags['totaldiscs']))]
     if 'cover_image' in tags:
         mp4audio['covr'] = cover
               
@@ -295,7 +241,7 @@ def tagMP3(folder, audioFile, tags, info):
     if 'genre' in tags:
         mp3audio['TCON'] = TCON(encoding = 3, text = unicode(tags['genre']))  
     if 'discnumber' in tags and 'totaldiscs' in tags:
-        mp3audio['TPOS'] = TPOS(encoding = 3, text = unicode(str(tags['discnumber']) + '/' + str(tags['totaldiscs']))) 
+        mp3audio['TPOS'] = TPOS(encoding = 3, text = unicode(tags['discnumber'] + '/' + tags['totaldiscs']))
     if 'cover_image' in tags:
         mp3audio['APIC'] = APIC(
                             encoding = 3, 
@@ -373,17 +319,16 @@ def renameAudioFolder(oldName, tags, info):
         Single artist:              Artsit name + album name
         Single artist multi disc:   Artsit name + album name + disc no.
     """
-    print('DEBUG: %s' % tags['totaldiscs'])
-    print('DEBUG: %s' % type(tags['totaldiscs']))
+    
     if os.path.isdir(oldName):
         if 'albumartist' in tags and tags['albumartist'] == 'Various Artists':
-            if 'totaldiscs' in tags and tags['totaldiscs'] > 1:
-                newName = tags['album'].title().replace(' ', '') + 'CD' + str(tags['discnumber'])
+            if 'totaldiscs' in tags and int(tags['totaldiscs']) > 1:
+                newName = tags['album'].title().replace(' ', '') + 'CD' + tags['discnumber']
             else:
                 newName = tags['album'].title().replace(' ', '')
         else:
-            if 'totaldiscs' in tags and tags['totaldiscs'] > 1:
-                newName = tags['artist'].title().replace(' ', '') + tags['album'].title().replace(' ', '') + 'CD' + str(tags['discnumber'])
+            if 'totaldiscs' in tags and int(tags['totaldiscs']) > 1:
+                newName = tags['artist'].title().replace(' ', '') + tags['album'].title().replace(' ', '') + 'CD' + tags['discnumber']
             else:    
                 newName = tags['artist'].title().replace(' ', '') + tags['album'].title().replace(' ', '')
         if info:
@@ -399,33 +344,40 @@ def main( ):
     args = usage()
     info = args['info']
     if args['single']:
-        albumFolders = [args['single']]
+        if os.path.isdir(args['single']):
+            albumFolders = [args['single']]
+        else:
+            sys.exit('%s "%s" %s' % ((color('1;31', 'Folder')), (color('1;31', args['single'])), (color('1;31', 'is no directory!'))))
     if args['archive']:
         albumFolders = os.walk('.').next()[1]
-    for  albumFolder in albumFolders:
-        tags = {}
-        if info:
-            print('Tagging audio folder: %s' % (color('1;33', albumFolder)))
-        folder = os.path.join(rootFolder, albumFolder)
-        coverPath = os.path.join(folder, 'cover.jpg')
-        coverReturn = createPrompt(coverPath) # True/False
-        if coverReturn == 'cover.jpg':
-            tags = getCover(folder, tags)   
-        elif not coverReturn:
-            sys.exit( )
-        albumInfoPath = os.path.join(folder, 'album.info')
-        albumInfoReturn = createPrompt(albumInfoPath) # True/False
-        if albumInfoReturn == 'album.info':
-            tags = getAlbumInfo(albumInfoPath, tags)
-        elif not albumInfoReturn:
-            sys.exit()
-        tagit(folder, tags, info)
-        if 'album' in tags and 'artist' in tags:
-            renameAudioFolder(albumFolder, tags, info)
-        else:
-            print('Could not rename audio folder, no artist or alblum information found.') 
-        print
-    print('%s' % (color('1;32', 'Successfully completed!')))
+        print( '%s' % albumFolders )
+    if albumFolders:
+        for albumFolder in albumFolders:
+            tags = {}
+            if info:
+                print('Tagging audio folder: %s' % (color('1;33', albumFolder)))
+            folder = os.path.join(rootFolder, albumFolder)
+            coverPath = os.path.join(folder, 'cover.jpg')
+            coverReturn = createPrompt(coverPath) # True/False
+            if coverReturn == 'cover.jpg':
+                tags = getCover(folder, tags)   
+            elif not coverReturn:
+                sys.exit( )
+            albumInfoPath = os.path.join(folder, 'album.info')
+            albumInfoReturn = createPrompt(albumInfoPath) # True/False
+            if albumInfoReturn == 'album.info':
+                tags = getAlbumInfo(albumInfoPath, tags)
+            elif not albumInfoReturn:
+                sys.exit()
+            tagit(folder, tags, info)
+            if 'album' in tags and 'artist' in tags:
+                renameAudioFolder(albumFolder, tags, info)
+            else:
+                print('Could not rename audio folder, no artist or alblum information found.')
+            print()
+        print('%s' % (color('1;32', 'Successfully completed!')))
+    else:
+        sys.exit('%s' % (color('1;31', 'Exit, no album folder found!')))   
     
 if __name__ == '__main__':
     main( )
