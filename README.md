@@ -18,10 +18,10 @@ Requirements
   ```<titel>-<artist>.<extension>``` for doing a file to tag tagging. 
 * An album cover image in jpg format, named *cover.jpg* is required in each CD folder
   to tag the album cover.
-* An album info file in each CD music folder in Python ConfigParser style is
+* An album info file named *album.info* in each CD music folder in Python ConfigParser style is
 required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
 
-Example album.info file content:
+Example *album.info* file content:
 ```
 [albuminfo]
 album = Thriller
