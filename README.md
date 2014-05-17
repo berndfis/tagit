@@ -16,7 +16,7 @@ Requirements
 * A folder based music archive, recommendation is to have on CD represented by one folder.
 * Audio file names in the notation ```<track>-<titel>-<artist>.<extension>``` or 
   ```<titel>-<artist>.<extension>``` for doing a file to tag tagging. 
-* An album cover image in jpg format, named "cover.jpg" is required in each CD folder
+* An album cover image in jpg format, named *cover.jpg* is required in each CD folder
   to tag the album cover.
 * An album info file in each CD music folder in Python ConfigParser style is
 required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
@@ -52,7 +52,7 @@ optional arguments:
                         all tags all fields form album.info plus cover
   -i, --info            gives a verbose output about the tagging status
 ```
--u is a blind option so far.
+*-u is a blind option so far.*
 
 
 Tag Mapping Table
