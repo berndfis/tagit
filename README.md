@@ -1,7 +1,7 @@
 tagit
 =====
 
-A Python [Mutagen] audio file Tagger for folder based music archives.
+A Python [Mutagen] audio file tagger for folder based music archives.
 
 Motivation
 ----------
@@ -88,10 +88,10 @@ I tried to write pythonic code according to:
 
 Good Other Stuff
 ----------------
-* [neroAacEncoder] my AAC (m4a) encoder choiuce.
+* [neroAacEncoder] my AAC (m4a) encoder choice.
 * [abcde] the best Linux CD ripper, comand line only, but who needs more.
 * [Asuder] a lean grahical CD ripper for Linux.
-* If you are looking for a Tagger with a great graphical UI
+* If you are looking for a tagger with a great graphical UI
   go for [Puddeltag].
 * [Beets] a music collection organizer which looks for Music Brainz entries, also  [Beets on GitHub].
 
