@@ -29,7 +29,8 @@ def usage():
  
     parser = argparse.ArgumentParser(
                 description = 
-                    'audio file tagger for folder based music archives for mp3 and m4a files',
+                    'audio file tagger for folder based music archives '
+                    'for mp3 and m4a files',
                 version = os.path.split( __file__ )[1]
                 )
 
@@ -45,7 +46,8 @@ def usage():
     group.add_argument(
         '-a', '--archive',
         action = 'store_true',
-        help = 'complete audio file directory archive, starting from the current directory'
+        help = 'complete audio file directory archive, starting from the '
+                'current directory'
         )
 
     parser.add_argument(
@@ -53,7 +55,8 @@ def usage():
         action = 'append',
         default = 'all',
         choices = ['all', 'album', 'albumartist', 'cover', 'genre'],
-        help = 'updates only the defined tag fields, "all" tags all fields form album.info plus cover'
+        help = 'updates only the defined tag fields, "all" tags all fields '
+                'form album.info plus cover'
         )
     parser.add_argument(
         '-i', '--info',
@@ -92,18 +95,19 @@ def queryYesNo(question, default='yes'):
         elif choice in valid.keys():
             return valid[choice]
         else:
-            sys.stdout.write('Please respond with "yes" or "no" (or "y" or "n").\n')
+            sys.stdout.write('Please respond with "yes" or "no" '
+                                '(or "y" or "n").\n')
 
 ################################################################################                             
 def createPrompt(path):
-    """Checks if a file exists and ask to crfrom __future__ import print_functioneate it if not."""
+    """Checks if a file exists and ask to create it if not."""
 
     if os.path.isfile(path):
         return os.path.basename(path)
     else:
         TrueFalse = queryYesNo(
-                    'File "%s" does not exists, do you want to proceed?' 
-                    % os.path.basename(path)
+                    'File "%s" does not exists, do you want to proceed?' % 
+                    os.path.basename(path)
                     )  
         return TrueFalse
     
@@ -162,9 +166,13 @@ def createTagInfo(tagName, tags):
 def printTaggingInfo(fileName, tags, i):
     """Prints the tagging information and status of the audio file."""
     
-    print('Tagging audio file: %s' % (color('1;33', os.path.basename(fileName))))
+    print('Tagging audio file: %s' %
+          (color('1;33', os.path.basename(fileName)))
+          )
 
-    tagNames = ['track', 'title', 'artist','album', 'albumartist', 'genre', 'date']
+    tagNames = [
+        'track', 'title', 'artist','album', 'albumartist', 'genre', 'date'
+        ]
 
     for tagName in tagNames:
         createTagInfo(tagName, tags)
@@ -229,19 +237,35 @@ def tagMP3(folder, audioFile, tags, info):
 
     # Adding new tags.
     if 'track' in tags and 'totaltracks' in tags: 
-        mp3audio['TRCK'] =  TRCK(encoding = 3, text = unicode(str(tags['track']) + '/' + str(tags['totaltracks']))) 
+        mp3audio['TRCK'] = TRCK(
+                            encoding = 3,
+                            text = unicode(
+                                    str(tags['track']) +
+                                    '/' + str(tags['totaltracks'])
+                                    )
+                            ) 
     mp3audio['TIT2'] = TIT2(encoding = 3, text = unicode(tags['title']))
     mp3audio['TPE1'] = TPE1(encoding = 3, text = unicode(tags['artist']))
     if 'album' in tags:
         mp3audio['TALB'] = TALB(encoding = 3, text = unicode(tags['album'])) 
     if 'albumartist' in tags:
-        mp3audio['TPE2'] = TPE2(encoding = 3, text = unicode(tags['albumartist'])) 
+        mp3audio['TPE2'] = TPE2(
+                            encoding = 3,
+                            text = unicode(tags['albumartist'])
+                            ) 
     if 'date' in tags:
         mp3audio['TDRC'] = TDRC(encoding = 3, text = unicode(tags['date'])) 
     if 'genre' in tags:
         mp3audio['TCON'] = TCON(encoding = 3, text = unicode(tags['genre']))  
     if 'discnumber' in tags and 'totaldiscs' in tags:
-        mp3audio['TPOS'] = TPOS(encoding = 3, text = unicode(tags['discnumber'] + '/' + tags['totaldiscs']))
+        mp3audio['TPOS'] = TPOS(
+                            encoding = 3,
+                            text = unicode(
+                                    tags['discnumber'] +
+                                    '/' +
+                                    tags['totaldiscs']
+                                    )
+                            )
     if 'cover_image' in tags:
         mp3audio['APIC'] = APIC(
                             encoding = 3, 
@@ -262,7 +286,8 @@ def tagit(folder, tags, info):
         # if yes this will create issues with splitting the extension.
         if fileName.count('.') == 1: 
             # Check if the filname is a audio file.
-            if os.path.isfile(os.path.join(folder, fileName)) and fileName.lower().endswith(('.m4a', '.mp3')):
+            if (os.path.isfile(os.path.join(folder, fileName)) and
+                fileName.lower().endswith(('.m4a', '.mp3'))):
                 # Check if there is a separator '-' for track, title and artist,
                 # to check file naming for:
                 #     track-title-artist
@@ -308,7 +333,9 @@ def tagit(folder, tags, info):
                     printTaggingInfo(audioFile, tags, i)    
                       
         else:  
-            print('File name: "%s" contains two dots, only one is allowed.' % ( fileName ))
+            print('File name: "%s" contains two dots, only one is allowed.' %
+                    (fileName)
+                    )
             sys.exit()
             
 ################################################################################
@@ -323,16 +350,22 @@ def renameAudioFolder(oldName, tags, info):
     if os.path.isdir(oldName):
         if 'albumartist' in tags and tags['albumartist'] == 'Various Artists':
             if 'totaldiscs' in tags and int(tags['totaldiscs']) > 1:
-                newName = tags['album'].title().replace(' ', '') + 'CD' + tags['discnumber']
+                newName = (tags['album'].title().replace(' ', '') +
+                            'CD' + tags['discnumber'])
             else:
                 newName = tags['album'].title().replace(' ', '')
         else:
             if 'totaldiscs' in tags and int(tags['totaldiscs']) > 1:
-                newName = tags['artist'].title().replace(' ', '') + tags['album'].title().replace(' ', '') + 'CD' + tags['discnumber']
+                newName = (tags['artist'].title().replace(' ', '') +
+                            tags['album'].title().replace(' ', '') +
+                            'CD' + tags['discnumber'])
             else:    
-                newName = tags['artist'].title().replace(' ', '') + tags['album'].title().replace(' ', '')
+                newName = (tags['artist'].title().replace(' ', '') +
+                            tags['album'].title().replace(' ', ''))
         if info:
-            print('Renaming audio folder from %s to %s.' % (color('1;33', oldName), color('1;33', newName)))
+            print('Renaming audio folder from %s to %s.' %
+                    (color('1;33', oldName), color('1;33', newName))
+                    )
         os.rename(oldName, newName)
     else:
         sys.exit()
@@ -347,7 +380,12 @@ def main( ):
         if os.path.isdir(args['single']):
             albumFolders = [args['single']]
         else:
-            sys.exit('%s "%s" %s' % ((color('1;31', 'Folder')), (color('1;31', args['single'])), (color('1;31', 'is no directory!'))))
+            sys.exit('%s "%s" %s' % (
+                        (color('1;31', 'Folder')),
+                        (color('1;31', args['single'])),
+                        (color('1;31', 'is no directory!'))
+                        )
+                    )
     if args['archive']:
         albumFolders = os.walk('.').next()[1]
         print( '%s' % albumFolders )
@@ -373,7 +411,9 @@ def main( ):
             if 'album' in tags and 'artist' in tags:
                 renameAudioFolder(albumFolder, tags, info)
             else:
-                print('Could not rename audio folder, no artist or alblum information found.')
+                print('Could not rename audio folder, '
+                        'no artist or alblum information found.'
+                    )
             print()
         print('%s' % (color('1;32', 'Successfully completed!')))
     else:
