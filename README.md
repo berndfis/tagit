@@ -21,13 +21,24 @@ Requirements
 * An album info file named *album.info* in each CD music folder in Python ConfigParser style is
 required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
 
-Example *album.info* file content:
+Example *album.info* file content for a single artist folder:
 ```
 [albuminfo]
 album = Thriller
 albumartist = Michael Jackson
 date = 1982
 genre = Pop
+discnumber = 1
+totaldiscs = 1
+```
+
+Example *album.info* file content for a multiple artist folder:
+```
+[albuminfo]
+album = Standing in the Shadows of Motown
+albumartist = Various Artists
+date = 2003
+genre = Soul
 discnumber = 1
 totaldiscs = 1
 ```
