@@ -1,12 +1,5 @@
 #!/usr/bin/python
 
-################################################################################
-#
-# $Id$
-# $Revision$
-#
-################################################################################
-
 from __future__ import print_function
 import os
 import string
@@ -75,7 +68,9 @@ def usage():
 
 #############################################################################
 def queryYesNo(question, default='yes'):
-    """Ask a yes/no question via raw_input() and return their answer."""
+    """Asks a yes/no question via raw_input() and returns True for yes and
+        False for no.
+    """
     
     valid = {'yes':True, 'y':True, 'ye':True, 'no':False, 'n':False}
     if default == None:
@@ -132,10 +127,10 @@ def progress(current, total):
 
 ################################################################################           
 def getAlbumInfo(albumInfoPath, tags):
-    """Reads the album info file and adds the content to the tag dictionary.
+    """Reads the album info file and adds the content to the tag dictionary
+        as string type.
         Posible album info options are:
-        srtings: album, albumartist, date, genre
-        integers: discnumber, totaldiscs
+        album, albumartist, date, genre, discnumber, totaldiscs
     """
     
     parser = SafeConfigParser()
@@ -189,6 +184,7 @@ def printTaggingInfo(fileName, tags, i):
     
 ################################################################################
 def tagMP4(folder, audioFile, tags, info):
+    """Tags the m4a files."""
     # TODO: need a update function
 
     # Build cover data
@@ -225,6 +221,7 @@ def tagMP4(folder, audioFile, tags, info):
     
 ################################################################################
 def tagMP3(folder, audioFile, tags, info):
+    """Tags the mp3 files."""
     # TODO: need a update function
      
     # Get mp3 audio file    
@@ -279,7 +276,9 @@ def tagMP3(folder, audioFile, tags, info):
    
 ################################################################################
 def tagit(folder, tags, info):
-
+    """Tag it parent routine, check the correct tag method foreach file in the
+        defined folder and receive the tags form then file name.
+    """
     i = 0
     for fileName in os.listdir(folder):
         # Check if the file name contains more than one dot in the name, 
@@ -333,10 +332,9 @@ def tagit(folder, tags, info):
                     printTaggingInfo(audioFile, tags, i)    
                       
         else:  
-            print('File name: "%s" contains two dots, only one is allowed.' %
+            sys.exit('File name: "%s" contains two dots, only one is allowed.' %
                     (fileName)
                     )
-            sys.exit()
             
 ################################################################################
 def renameAudioFolder(oldName, tags, info):
@@ -372,6 +370,9 @@ def renameAudioFolder(oldName, tags, info):
     
 ################################################################################
 def main( ):
+    """Resolves the command line arguments and checks for supporting files
+        cover.jpg and album.info.
+    """
 
     rootFolder = os.getcwd( )
     args = usage()
@@ -400,7 +401,7 @@ def main( ):
             if coverReturn == 'cover.jpg':
                 tags = getCover(folder, tags)   
             elif not coverReturn:
-                sys.exit( )
+                sys.exit()
             albumInfoPath = os.path.join(folder, 'album.info')
             albumInfoReturn = createPrompt(albumInfoPath) # True/False
             if albumInfoReturn == 'album.info':
