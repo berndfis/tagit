@@ -115,7 +115,7 @@ Good Other Stuff
   go for [Puddeltag].
 * [Beets] a music collection organizer which looks for Music Brainz entries, also  [Beets on GitHub].
 
-[Mutagen]:https://code.google.com/p/mutagen/
+[Mutagen]:https://pypi.python.org/pypi/mutagen/1.23
 [neroAacEncoder]:http://www.nero.com/enu/company/about-nero/nero-aac-codec.php
 [abcde]:https://code.google.com/p/abcde/
 [Asuder]:http://littlesvr.ca/asunder/
