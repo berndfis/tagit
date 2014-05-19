@@ -3,13 +3,19 @@ tagit
 
 A Python [Mutagen] audio file tagger for folder based music archives.
 
-Motivation
-----------
-A long story which comes later.
+Description
+-----------
+
+Will bee added soon.
 
 Features
 --------
-Will bee added soon.
+* mp3 and m4a (AAC) support.
+* Ability to tag complete folder based music archives.
+* Single folder tagging support as well.
+* iTunes recognized tags.
+* Embeds album cover.
+* Informative tagging output.
 
 Requirements
 ------------
@@ -21,13 +27,24 @@ Requirements
 * An album info file named *album.info* in each CD music folder in Python ConfigParser style is
 required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
 
-Example *album.info* file content:
+Example *album.info* file content for a single artist folder:
 ```
 [albuminfo]
 album = Thriller
 albumartist = Michael Jackson
 date = 1982
 genre = Pop
+discnumber = 1
+totaldiscs = 1
+```
+
+Example *album.info* file content for a multiple artist folder:
+```
+[albuminfo]
+album = Standing in the Shadows of Motown
+albumartist = Various Artists
+date = 2003
+genre = Soul
 discnumber = 1
 totaldiscs = 1
 ```
@@ -77,6 +94,9 @@ Reference: [MusicBrainz Picard Mapping]
 | totaldiscs    | disk         | TPOS
 | cover         | covr         | APIC
 
+Motivation
+----------
+A long story which comes later.
 
 Coding Style
 ------------
@@ -95,11 +115,10 @@ Good Other Stuff
   go for [Puddeltag].
 * [Beets] a music collection organizer which looks for Music Brainz entries, also  [Beets on GitHub].
 
-[Mutagen]:https://code.google.com/p/mutagen/
+[Mutagen]:https://pypi.python.org/pypi/mutagen/1.23
 [neroAacEncoder]:http://www.nero.com/enu/company/about-nero/nero-aac-codec.php
 [abcde]:https://code.google.com/p/abcde/
 [Asuder]:http://littlesvr.ca/asunder/
-
 [MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
 [Style Guide for Python Code]:http://legacy.python.org/dev/peps/pep-0008/
 [The Zen of Python]:http://legacy.python.org/dev/peps/pep-0020/
