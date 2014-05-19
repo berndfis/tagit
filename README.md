@@ -3,13 +3,19 @@ tagit
 
 A Python [Mutagen] audio file tagger for folder based music archives.
 
-Motivation
-----------
-A long story which comes later.
+Description
+-----------
+
+Will bee added soon.
 
 Features
 --------
-Will bee added soon.
+* mp3 and m4a (AAC) support.
+* Ability to tag complete folder based music archives.
+* Single folder tagging support as well.
+* iTunes recognized tags.
+* Embeds album cover.
+* Informative tagging output.
 
 Requirements
 ------------
@@ -88,6 +94,9 @@ Reference: [MusicBrainz Picard Mapping]
 | totaldiscs    | disk         | TPOS
 | cover         | covr         | APIC
 
+Motivation
+----------
+A long story which comes later.
 
 Coding Style
 ------------
@@ -110,7 +119,6 @@ Good Other Stuff
 [neroAacEncoder]:http://www.nero.com/enu/company/about-nero/nero-aac-codec.php
 [abcde]:https://code.google.com/p/abcde/
 [Asuder]:http://littlesvr.ca/asunder/
-
 [MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
 [Style Guide for Python Code]:http://legacy.python.org/dev/peps/pep-0008/
 [The Zen of Python]:http://legacy.python.org/dev/peps/pep-0020/
