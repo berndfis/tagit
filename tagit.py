@@ -27,6 +27,7 @@ def usage():
                 version = os.path.split( __file__ )[1]
                 )
 
+    # Singel and archive will be excluse arguments
     group = parser.add_mutually_exclusive_group()
     
     # Optional arguments      
@@ -56,6 +57,21 @@ def usage():
         action = 'store_true',
         default = True,
         help = 'gives a verbose output about the tagging status'
+        )
+
+    # Hidden arguments, just to store the file names
+    parser.add_argument(
+        '-c', '--cover',
+        action = 'store',
+        default = 'cover.jpg',
+        help = argparse.SUPPRESS
+        )
+
+    parser.add_argument(
+        '-f', '--foldertags',
+        action = 'store',
+        default = 'album.info',
+        help = argparse.SUPPRESS
         )    
  
     if len(sys.argv) == 1:
@@ -142,10 +158,10 @@ def getAlbumInfo(albumInfoPath, tags):
     return tags
     
 ################################################################################    
-def getCover(folder, tags):
+def getCover(coverPath, tags):
     """Reads the album cover image and adds it to the tag dictionary."""
 
-    tags['cover_image'] = open(os.path.join(folder, 'cover.jpg'), 'rb').read()
+    tags['cover_image'] = open(coverPath, 'rb').read()
     return tags
 
 ################################################################################
@@ -187,10 +203,6 @@ def tagMP4(folder, audioFile, tags, info):
     """Tags the m4a files."""
     # TODO: need a update function
 
-    # Build cover data
-    cover = []
-    cover.append(MP4Cover(tags['cover_image'] , MP4Cover.FORMAT_PNG))
-
     # Get mp4 audio file
     mp4audio = MP4(audioFile)
 
@@ -213,7 +225,10 @@ def tagMP4(folder, audioFile, tags, info):
         mp4audio['\xa9gen'] = tags['genre']
     if 'discnumber' in tags and 'totaldiscs' in tags:
         mp4audio['disk'] = [(int(tags['discnumber']), int(tags['totaldiscs']))]
+    # Build cover data annd add cover tag
     if 'cover_image' in tags:
+        cover = []
+        cover.append(MP4Cover(tags['cover_image'] , MP4Cover.FORMAT_PNG))
         mp4audio['covr'] = cover
               
     # Save new tags.
@@ -377,6 +392,7 @@ def main( ):
     rootFolder = os.getcwd( )
     args = usage()
     info = args['info']
+
     if args['single']:
         if os.path.isdir(args['single']):
             albumFolders = [args['single']]
@@ -387,28 +403,41 @@ def main( ):
                         (color('1;31', 'is no directory!'))
                         )
                     )
+
     if args['archive']:
         albumFolders = os.walk('.').next()[1]
         print( '%s' % albumFolders )
+
+    # Looping through all the album folders
     if albumFolders:
         for albumFolder in albumFolders:
             tags = {}
             if info:
                 print('Tagging audio folder: %s' % (color('1;33', albumFolder)))
             folder = os.path.join(rootFolder, albumFolder)
-            coverPath = os.path.join(folder, 'cover.jpg')
+
+            # Album cover check
+            coverImage = args['cover']
+            coverPath = os.path.join(folder, coverImage)
             coverReturn = createPrompt(coverPath) # True/False
-            if coverReturn == 'cover.jpg':
-                tags = getCover(folder, tags)   
+            if coverReturn == coverImage:
+                tags = getCover(coverPath, tags)   
             elif not coverReturn:
                 sys.exit()
-            albumInfoPath = os.path.join(folder, 'album.info')
+
+            # Album info file check
+            albumInfo = args['foldertags']
+            albumInfoPath = os.path.join(folder, albumInfo)
             albumInfoReturn = createPrompt(albumInfoPath) # True/False
-            if albumInfoReturn == 'album.info':
+            if albumInfoReturn == albumInfo:
                 tags = getAlbumInfo(albumInfoPath, tags)
             elif not albumInfoReturn:
                 sys.exit()
+
+            # Tag it
             tagit(folder, tags, info)
+
+            # Renaming the album folder
             if 'album' in tags and 'artist' in tags:
                 renameAudioFolder(albumFolder, tags, info)
             else:
@@ -416,6 +445,7 @@ def main( ):
                         'no artist or alblum information found.'
                     )
             print()
+
         print('%s' % (color('1;32', 'Successfully completed!')))
     else:
         sys.exit('%s' % (color('1;31', 'Exit, no album folder found!')))   
