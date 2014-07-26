@@ -27,7 +27,7 @@ def usage():
                 version = os.path.split( __file__ )[1]
                 )
 
-    # Singel and archive will be excluse arguments
+    # Singel and archive will be exclusive arguments
     group = parser.add_mutually_exclusive_group()
     
     # Optional arguments      
@@ -283,7 +283,7 @@ def tagMP3(folder, audioFile, tags, info):
                             encoding = 3, 
                             mime = 'image/jpg', 
                             type = 3, # 3 is for the cover image
-                            desc = u'Cover',
+                            desc = unicode('Cover'),
                             data = tags['cover_image']
                             )
     # Save new tags.
