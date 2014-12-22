@@ -45,19 +45,20 @@ def usage():
         )
 
     parser.add_argument(
-        '-u', '--update',
-        action = 'append',
-        default = 'all',
-        choices = ['all', 'album', 'albumartist', 'cover', 'genre'],
-        help = 'updates only the defined tag fields, "all" tags all fields '
-                'form album.info plus cover'
-        )
-    parser.add_argument(
         '-i', '--info',
+        dest='info',
         action = 'store_true',
-        default = True,
         help = 'gives a verbose output about the tagging status'
+        ) 
+
+    parser.add_argument(
+        '-n', '--no-info',
+        dest='info',
+        action = 'store_false',
+        help = 'suppresses the verbose output about the tagging status'
         )
+    
+    parser.set_defaults(info=True)
 
     # Hidden arguments, just to store the file names
     parser.add_argument(
@@ -201,14 +202,13 @@ def printTaggingInfo(fileName, tags, i):
 ################################################################################
 def tagMP4(folder, audioFile, tags, info):
     """Tags the m4a files."""
-    # TODO: need a update function
 
     # Get mp4 audio file
     mp4audio = MP4(audioFile)
 
-    # Tag everything new.
-    # Delete old tags first.
-    mp4audio.delete(audioFile) 
+    # Update tags.
+    # For m4a old tags are not deleted, because source is abcde ripper.
+    #mp4audio.delete(audioFile) 
     
     # Adding new tags.
     if 'track' in tags and 'totaltracks' in tags: 
@@ -237,7 +237,6 @@ def tagMP4(folder, audioFile, tags, info):
 ################################################################################
 def tagMP3(folder, audioFile, tags, info):
     """Tags the mp3 files."""
-    # TODO: need a update function
      
     # Get mp3 audio file    
     # and create ID3 tag if not present
@@ -245,6 +244,7 @@ def tagMP3(folder, audioFile, tags, info):
    
     # Tag everything new.
     # Delete old tags first.
+    # For mp3 old tags are delted, because source in unknown.
     mp3audio.delete(audioFile)
 
     # Adding new tags.
@@ -363,18 +363,18 @@ def renameAudioFolder(oldName, tags, info):
     if os.path.isdir(oldName):
         if 'albumartist' in tags and tags['albumartist'] == 'Various Artists':
             if 'totaldiscs' in tags and int(tags['totaldiscs']) > 1:
-                newName = (tags['album'].title().replace(' ', '') +
+                newName = (tags['album'].title() + '-' +
                             'CD' + tags['discnumber'])
             else:
-                newName = tags['album'].title().replace(' ', '')
+                newName = tags['album'].title()
         else:
             if 'totaldiscs' in tags and int(tags['totaldiscs']) > 1:
-                newName = (tags['artist'].title().replace(' ', '') +
-                            tags['album'].title().replace(' ', '') +
+                newName = (tags['artist'].title() + '-' +
+                            tags['album'].title() + ' ' +
                             'CD' + tags['discnumber'])
             else:    
-                newName = (tags['artist'].title().replace(' ', '') +
-                            tags['album'].title().replace(' ', ''))
+                newName = (tags['artist'].title() + '-' +
+                            tags['album'].title())
         if info:
             print('Renaming audio folder from %s to %s.' %
                     (color('1;33', oldName), color('1;33', newName))
@@ -384,12 +384,12 @@ def renameAudioFolder(oldName, tags, info):
         sys.exit()
     
 ################################################################################
-def main( ):
+def main():
     """Resolves the command line arguments and checks for supporting files
         cover.jpg and album.info.
     """
 
-    rootFolder = os.getcwd( )
+    rootFolder = os.getcwd()
     args = usage()
     info = args['info']
 
@@ -406,7 +406,7 @@ def main( ):
 
     if args['archive']:
         albumFolders = os.walk('.').next()[1]
-        print( '%s' % albumFolders )
+        print('%s' % albumFolders)
 
     # Looping through all the album folders
     if albumFolders:
@@ -451,4 +451,4 @@ def main( ):
         sys.exit('%s' % (color('1;31', 'Exit, no album folder found!')))   
     
 if __name__ == '__main__':
-    main( )
+    main()

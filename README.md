@@ -6,7 +6,9 @@ A Python [Mutagen] audio file tagger for folder based music archives.
 Description
 -----------
 
-Will bee added soon.
+Post ripping audio file tagger for folder based music archives.
+Developed for cleanup of folder based audio file archives and for post-ripp
+tagging e.g. after ripped with [abcde].
 
 Features
 --------
@@ -16,6 +18,7 @@ Features
 * iTunes recognized tags.
 * Embeds album cover.
 * Informative tagging output.
+* Folder renaming, for common folder notation.
 
 Requirements
 ------------
@@ -25,7 +28,7 @@ Requirements
 * An album cover image in jpg format, named *cover.jpg* is required in each CD folder
   to tag the album cover.
 * An album info file named *album.info* in each CD music folder in Python ConfigParser style is
-required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
+  required for tagging album, albumartist, date, genre, discnumber and totaldiscs.
 
 Example *album.info* file content for a single artist folder:
 ```
@@ -52,25 +55,20 @@ totaldiscs = 1
 Usage
 -----
 ```
-usage: tagit.py [-h] [-v] [-s SINGLE | -a]
-                [-u {all,album,albumartist,cover,genre}] [-i]
+usage: tagit.py [-h] [-v] [-s SINGLE | -a] [-i]
 
-audio file archive tagger for mp3 and m4a
+audio file tagger for folder based music archives for mp3 and m4a files
 
 optional arguments:
-  -h, --help            show this help message & exit
-  -v, --version         show programs version number & exit
-  -s SINGLE, --single SINGLE single directory, input must be the folder name
-  -a, --archive         complete audio file directory archive, starting from the 
-                        current directory
-  -u {all,album,albumartist,cover,genre}, 
-      --update {all,album,albumartist,cover,genre}
-                        updates only the defined tag fields, 
-                        all tags all fields form album.info plus cover
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+  -s SINGLE, --single SINGLE
+                        single directory, input must be the directory name
+  -a, --archive         complete audio file directory archive, starting from
+                        the current directory
   -i, --info            gives a verbose output about the tagging status
+  -n, --no-info         suppresses the verbose output about the tagging status
 ```
-*-u is a blind option so far.*
-
 
 Tag Mapping Table
 -----------------
@@ -94,34 +92,15 @@ Reference: [MusicBrainz Picard Mapping]
 | totaldiscs    | disk         | TPOS
 | cover         | covr         | APIC
 
-Motivation
-----------
-A long story which comes later.
-
-Coding Style
-------------
-Even though I'm mainly used to write code in a proprietary Lisp dialect
-I tried to write pythonic code according to:
-* [Style Guide for Python Code]
-* [The Zen of Python]
-
-
 Good Other Stuff
 ----------------
 * [neroAacEncoder] my AAC (m4a) encoder choice.
-* [abcde] the best Linux CD ripper, comand line only, but who needs more.
-* [Asuder] a lean grahical CD ripper for Linux.
+* [abcde] the best Linux CD ripper, command line only, but who needs more.
 * If you are looking for a tagger with a great graphical UI
   go for [Puddeltag].
-* [Beets] a music collection organizer which looks for Music Brainz entries, also  [Beets on GitHub].
 
 [Mutagen]:https://pypi.python.org/pypi/mutagen/1.23
 [neroAacEncoder]:http://www.nero.com/enu/company/about-nero/nero-aac-codec.php
 [abcde]:https://code.google.com/p/abcde/
-[Asuder]:http://littlesvr.ca/asunder/
 [MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
-[Style Guide for Python Code]:http://legacy.python.org/dev/peps/pep-0008/
-[The Zen of Python]:http://legacy.python.org/dev/peps/pep-0020/
 [Puddeltag]:http://puddletag.sourceforge.net/
-[Beets]:http://beets.radbox.org/
-[Beets on GitHub]:https://github.com/sampsyo/beets
