@@ -99,8 +99,8 @@ Good Other Stuff
 * If you are looking for a tagger with a great graphical UI
   go for [Puddeltag].
 
-[Mutagen]:https://pypi.python.org/pypi/mutagen/1.23
+[Mutagen]:https://pypi.python.org/pypi/mutagen
 [neroAacEncoder]:http://www.nero.com/enu/company/about-nero/nero-aac-codec.php
-[abcde]:https://code.google.com/p/abcde/
+[abcde]:http://abcde.einval.com/
 [MusicBrainz Picard Mapping]:https://musicbrainz.org/doc/MusicBrainz_Picard/Tags/Mapping
 [Puddeltag]:http://puddletag.sourceforge.net/
