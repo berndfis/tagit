@@ -197,8 +197,33 @@ def printTaggingInfo(fileName, tags, i):
     # Print 
     sys.stdout.write(progress(i, tags['totaltracks']) + '\r')
     sys.stdout.flush()
-    time.sleep(0.002)                  
-    
+    time.sleep(0.002)              
+
+################################################################################
+def createAlbumName(tags):
+    """Creates the album name according the following rules:
+        Various artists:            Album name
+        Various artists multi disc: Album name + disc no.
+        Single artist:              Artsit name + album name
+        Single artist multi disc:   Artsit name + album name + disc no. 
+    """    
+        
+    if 'albumartist' in tags and tags['albumartist'] == 'Various Artists':
+        if 'totaldiscs' in tags and int(tags['totaldiscs']) > 1:
+            newName = (tags['album'].title() +
+                        ' CD' + tags['discnumber'])
+        else:
+            newName = tags['album'].title()
+    else:
+        if 'totaldiscs' in tags and int(tags['totaldiscs']) > 1:
+            newName = (tags['artist'].title() + '-' +
+                        tags['album'].title() + ' ' +
+                        'CD' + tags['discnumber'])
+        else:    
+            newName = (tags['artist'].title() + '-' +
+                        tags['album'].title())
+    return(newName)
+
 ################################################################################
 def tagMP4(folder, audioFile, tags, info):
     """Tags the m4a files."""
@@ -316,7 +341,7 @@ def tagit(folder, tags, info):
                 extension = os.path.splitext(fileName)[1][1:].strip().lower()
 
                 # Assign the tag variables retrieved form file name,
-                # dependent for the file naming with out witout track.
+                # dependent for the file naming with or witout track.
                 if method == 'withTrack':
                     tags['track'] = string.split(fileName, '-')[0].strip()
                     tags['title'] = string.split(fileName, '-')[1].strip()
@@ -344,7 +369,7 @@ def tagit(folder, tags, info):
                 # Print the tagging information
                 if info:
                     i +=1
-                    printTaggingInfo(audioFile, tags, i)    
+                    printTaggingInfo(audioFile, tags, i)   
                       
         else:  
             sys.exit('File name: "%s" contains two dots, only one is allowed.' %
@@ -361,24 +386,7 @@ def renameAudioFolder(oldName, tags, info):
     """
     
     if os.path.isdir(oldName):
-        if 'albumartist' in tags and tags['albumartist'] == 'Various Artists':
-            if 'totaldiscs' in tags and int(tags['totaldiscs']) > 1:
-                newName = (tags['album'].title() + '-' +
-                            'CD' + tags['discnumber'])
-            else:
-                newName = tags['album'].title()
-        else:
-            if 'totaldiscs' in tags and int(tags['totaldiscs']) > 1:
-                newName = (tags['artist'].title() + '-' +
-                            tags['album'].title() + ' ' +
-                            'CD' + tags['discnumber'])
-            else:    
-                newName = (tags['artist'].title() + '-' +
-                            tags['album'].title())
-        if info:
-            print('Renaming audio folder from %s to %s.' %
-                    (color('1;33', oldName), color('1;33', newName))
-                    )
+        newName = createAlbumName(tags)
         os.rename(oldName, newName)
     else:
         sys.exit()
