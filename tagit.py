@@ -336,7 +336,11 @@ def tagit(folder, tags, info):
                         method = 'withTrack'
                     elif fileName.count('-') == 1:
                         method = 'withOutTrack'
-                                        
+                    else:
+                        sys.exit((color('1;31', 'File name: "%s" contains more than two hyphens, maximum two are allowed.' %
+                                (fileName)))
+                                )
+
                 # Get audio file extension, should be ".m4a" or ".mp3'
                 extension = os.path.splitext(fileName)[1][1:].strip().lower()
 
@@ -372,8 +376,8 @@ def tagit(folder, tags, info):
                     printTaggingInfo(audioFile, tags, i)   
                       
         else:  
-            sys.exit('File name: "%s" contains two dots, only one is allowed.' %
-                    (fileName)
+            sys.exit((color('1;31', 'File name: "%s" contains two dots, only one is allowed.' %
+                    (fileName)))
                     )
             
 ################################################################################
@@ -414,7 +418,6 @@ def main():
 
     if args['archive']:
         albumFolders = os.walk('.').next()[1]
-        print('%s' % albumFolders)
 
     # Looping through all the album folders
     if albumFolders:
