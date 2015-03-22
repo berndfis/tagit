@@ -1,6 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-from __future__ import print_function
 import os
 import string
 import glob
@@ -10,7 +9,7 @@ import termios
 import struct
 import time
 import argparse
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 from mutagen.mp4 import MP4, MP4Cover
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3NoHeaderError, error
@@ -23,8 +22,7 @@ def usage():
     parser = argparse.ArgumentParser(
                 description = 
                     'audio file tagger for folder based music archives '
-                    'for mp3 and m4a files',
-                version = os.path.split( __file__ )[1]
+                    'for mp3 and m4a files'
                 )
 
     # Singel and archive will be exclusive arguments
@@ -347,14 +345,14 @@ def tagit(folder, tags, info):
                 # Assign the tag variables retrieved form file name,
                 # dependent for the file naming with or witout track.
                 if method == 'withTrack':
-                    tags['track'] = string.split(fileName, '-')[0].strip()
-                    tags['title'] = string.split(fileName, '-')[1].strip()
-                    rest = string.split(fileName, '-')[2].strip()
-                    tags['artist'] = string.split(rest, '.')[0].strip()
+                    tags['track'] = fileName.split('-')[0].strip()
+                    tags['title'] = fileName.split('-')[1].strip()
+                    rest = fileName.split('-')[2].strip()
+                    tags['artist'] = rest.split('.')[0].strip()
                 elif method == 'withOutTrack':
-                    tags['title'] = string.split(fileName, '-' )[0].strip()
-                    rest = string.split(fileName, '-')[1].strip()
-                    tags['artist'] = string.split(rest, '.')[0].strip()
+                    tags['title'] = fileName.split('-' )[0].strip()
+                    rest = fileName.split('-')[1].strip()
+                    tags['artist'] = rest.split('.')[0].strip()
 
                 audioFile = os.path.join(folder, fileName)  
 
@@ -417,7 +415,7 @@ def main():
                     )
 
     if args['archive']:
-        albumFolders = os.walk('.').next()[1]
+        albumFolders = next(os.walk('.'))[1]
 
     # Looping through all the album folders
     if albumFolders:
