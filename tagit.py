@@ -274,39 +274,31 @@ def tagMP3(folder, audioFile, tags, info):
     if 'track' in tags and 'totaltracks' in tags: 
         mp3audio['TRCK'] = TRCK(
                             encoding = 3,
-                            text = unicode(
-                                    str(tags['track']) +
-                                    '/' + str(tags['totaltracks'])
-                                    )
-                            ) 
-    mp3audio['TIT2'] = TIT2(encoding = 3, text = unicode(tags['title']))
-    mp3audio['TPE1'] = TPE1(encoding = 3, text = unicode(tags['artist']))
+                            text = str(tags['track']) + '/' + 
+                                    str(tags['totaltracks'])
+                            )
+    mp3audio['TIT2'] = TIT2(encoding = 3, text = tags['title'])
+    mp3audio['TPE1'] = TPE1(encoding = 3, text = tags['artist'])
     if 'album' in tags:
-        mp3audio['TALB'] = TALB(encoding = 3, text = unicode(tags['album'])) 
+        mp3audio['TALB'] = TALB(encoding = 3, text = tags['album']) 
     if 'albumartist' in tags:
-        mp3audio['TPE2'] = TPE2(
-                            encoding = 3,
-                            text = unicode(tags['albumartist'])
-                            ) 
+        mp3audio['TPE2'] = TPE2(encoding = 3, text = tags['albumartist']) 
     if 'date' in tags:
-        mp3audio['TDRC'] = TDRC(encoding = 3, text = unicode(tags['date'])) 
+        mp3audio['TDRC'] = TDRC(encoding = 3, text = tags['date']) 
     if 'genre' in tags:
-        mp3audio['TCON'] = TCON(encoding = 3, text = unicode(tags['genre']))  
+        mp3audio['TCON'] = TCON(encoding = 3, text = tags['genre'])  
     if 'discnumber' in tags and 'totaldiscs' in tags:
         mp3audio['TPOS'] = TPOS(
                             encoding = 3,
-                            text = unicode(
-                                    tags['discnumber'] +
-                                    '/' +
-                                    tags['totaldiscs']
-                                    )
+                            text = str(tags['discnumber']) + '/' + 
+                                    str(tags['totaldiscs'])
                             )
     if 'cover_image' in tags:
         mp3audio['APIC'] = APIC(
                             encoding = 3, 
                             mime = 'image/jpg', 
                             type = 3, # 3 is for the cover image
-                            desc = unicode('Cover'),
+                            desc = 'Cover',
                             data = tags['cover_image']
                             )
     # Save new tags.
