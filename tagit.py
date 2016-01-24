@@ -83,7 +83,7 @@ def usage():
 
 #############################################################################
 def queryYesNo(question, default='yes'):
-    """Asks a yes/no question via raw_input() and returns True for yes and
+    """Asks a yes/no question via input() and returns True for yes and
         False for no.
     """
     
@@ -99,7 +99,7 @@ def queryYesNo(question, default='yes'):
 
     while 1:
         sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
+        choice = input().lower()
         if default is not None and choice == '':
             return default
         elif choice in valid.keys():
@@ -118,7 +118,7 @@ def createPrompt(path):
         TrueFalse = queryYesNo(
                     'File "%s" does not exists, do you want to proceed?' % 
                     os.path.basename(path)
-                    )  
+                    ) 
         return TrueFalse
     
 ################################################################################     
